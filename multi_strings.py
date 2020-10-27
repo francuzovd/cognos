@@ -37,9 +37,14 @@ def dub_months(find_value, replace_value):
     """
     base_string = input('Введите строку:\n')
     if base_string == '':
-        base_string = f"['{find_str}'] = DB('Расходны на персонал', !Тип данных, !Год, !Версия, !Подразделение, '{find_str}')"
+        base_string = f"['{find_str[0]}'] = DB('Расходны на персонал', !Тип данных, !Год, !Версия, !Подразделение, '{find_str[0]}')"
+    new_strings = []
     for value in replace_value:
-        print(base_string.replace(find_value, value))
+        new_str = base_string
+        for i, rep in enumerate(value.split()):
+            new_str = new_str.replace(find_value[i].strip(), rep.strip())
+        new_strings.append(new_str)
+    return new_strings
 
 
 if __name__ == '__main__':
@@ -50,14 +55,22 @@ if __name__ == '__main__':
         f_ind = arguments.index('-f') + 1
         find_str = arguments[f_ind]
     else:
-        find_str = '###'
+        find_str = input('Введите шаблон поиска:\n').split(',')
+        if find_str == ['']:
+            print('Автоматически создан шаблон - ###\n')
+            find_str = ['###']
 
-    # параметр, определяющий список заначений,на которые заменится шаблон
+    # параметр, определяющий список
+    # заначений,на которые заменится шаблон
     if '-r' in arguments:
         r_ind = arguments.index('-r') + 1
         rep_str = arguments[r_ind].split()
     else:
-        rep_str = ['янв', 'фев', 'мар', 'апр', 'май', 'июн',
-                   'июл', 'авг', 'сен', 'окт', 'ноя', 'дек']
+        rep_str = input('Введите список новых значений:\n').split(',')
+        if rep_str == ['']:
+            rep_str = ['янв', 'фев', 'мар', 'апр', 'май', 'июн',
+                       'июл', 'авг', 'сен', 'окт', 'ноя', 'дек']
 
-    dub_months(find_str, rep_str)
+    new_strings = dub_months(find_str, rep_str)
+    print(*new_strings, sep='\n')
+
