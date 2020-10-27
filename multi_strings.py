@@ -41,6 +41,15 @@ CellPutS(vsDir, 'Сотрудники', !Тип данных, !Год, !Верс
 
 """
 import sys
+from datetime import datetime
+import logging
+
+@logging.start_program
+def welcome():
+    with open('welcome.txt', 'r') as f:
+        welcome_str = f.read()
+
+    print(welcome_str)
 
 
 def dub_months(find_value, replace_value):
@@ -52,6 +61,7 @@ def dub_months(find_value, replace_value):
     :param find_value: шаблон, string
     :param replace_value: список строковых значений, array
     """
+
     base_string = input('Введите редактируемую строку:\n')
     if base_string == '':
         base_string = f"['{find_str[0]}'] = DB('Расходны на персонал', !Тип данных, !Год, !Версия, !Подразделение, '{find_str[0]}')"
@@ -68,13 +78,11 @@ if __name__ == '__main__':
     # получаем список переданных параметров
     arguments = sys.argv[1:]
 
+
     # если параметров нет, значит запущена программа для использования несколько раз
     # и выводится приветствие
     if arguments != ['']:
-        with open('welcome.txt', 'r') as f:
-            welcome_str = f.read()
-
-        print(welcome_str)
+        welcome()
 
     while True:
         # флаг для выхода из программы
@@ -102,6 +110,7 @@ if __name__ == '__main__':
             if rep_str == ['']:
                 rep_str = ['янв', 'фев', 'мар', 'апр', 'май', 'июн',
                            'июл', 'авг', 'сен', 'окт', 'ноя', 'дек']
+
 
         new_strings = dub_months(find_str, rep_str)
         print(*new_strings, sep='\n')
