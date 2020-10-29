@@ -42,14 +42,34 @@ CellPutS(vsDir, 'Сотрудники', !Тип данных, !Год, !Верс
 """
 import sys
 from datetime import datetime
+import log
 import logging
+import logging.config
+from const import *
 
-@logging.start_program
+# настройка логирования
+logfile_name = f"{datetime.now().strftime('%Y%m%d')}.log"
+logging.config.fileConfig(fname='log.cnf', disable_existing_loggers=False)
+logger = logging.getLogger(__name__)
+# logger.setLevel(logging.INFO)
+#
+# f_handler = logging.FileHandler(logfile_name)
+# f_handler.setLevel(logging.INFO)
+#
+# f_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# f_handler.setFormatter(f_format)
+#
+# logger.addHandler(f_handler)
+
+# получаем список переданных параметров
+arguments = sys.argv[1:]
+
+@log.start_program(logger)
 def welcome():
     with open('welcome.txt', 'r') as f:
         welcome_str = f.read()
 
-    print(welcome_str)
+    return welcome_str
 
 
 def dub_months(find_value, replace_value):
@@ -75,14 +95,13 @@ def dub_months(find_value, replace_value):
 
 
 if __name__ == '__main__':
-    # получаем список переданных параметров
-    arguments = sys.argv[1:]
+
 
 
     # если параметров нет, значит запущена программа для использования несколько раз
     # и выводится приветствие
     if arguments != ['']:
-        welcome()
+        print(welcome())
 
     while True:
         # флаг для выхода из программы
@@ -97,7 +116,7 @@ if __name__ == '__main__':
             find_str = input('Введите шаблон замены:\n').split(',')
             if find_str == ['']:
                 print('Автоматически создан шаблон - ###\n')
-                find_str = ['###']
+                find_str = TEMPLATE
 
         # параметр, определяющий список
         # заначений,на которые заменится шаблон
@@ -108,8 +127,7 @@ if __name__ == '__main__':
         else:
             rep_str = input('Введите список новых значений:\n').split(',')
             if rep_str == ['']:
-                rep_str = ['янв', 'фев', 'мар', 'апр', 'май', 'июн',
-                           'июл', 'авг', 'сен', 'окт', 'ноя', 'дек']
+                rep_str = REP_DATA
 
 
         new_strings = dub_months(find_str, rep_str)
