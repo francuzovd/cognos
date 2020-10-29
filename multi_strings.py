@@ -41,6 +41,7 @@ CellPutS(vsDir, 'Сотрудники', !Тип данных, !Год, !Верс
 
 """
 import sys
+import os
 from datetime import datetime
 import log
 import logging
@@ -48,9 +49,11 @@ import logging.config
 from const import *
 
 # настройка логирования
-logfile_name = f"{datetime.now().strftime('%Y%m%d')}.log"
-logging.config.fileConfig(fname='log.cnf', disable_existing_loggers=False)
-logger = logging.getLogger(__name__)
+logfile_name = os.path.join(sys.path[0], f"{datetime.now().strftime('%Y%m%d')}.log")
+# logfile_name = os.path.join(sys.path[0], f"python.log")
+logging.config.fileConfig(fname='log.cnf', defaults={'logfilename': logfile_name}, disable_existing_loggers=False)
+# logger1 = logging.getLogger(__name__)
+logger = logging.getLogger('progLogger')
 # logger.setLevel(logging.INFO)
 #
 # f_handler = logging.FileHandler(logfile_name)
