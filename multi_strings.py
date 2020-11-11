@@ -50,6 +50,9 @@ from const import *
 
 # настройка логирования
 logfile_name = os.path.join(sys.path[0], f"{datetime.now().strftime('%Y%m%d')}.log")
+logfile_name = logfile_name.replace('\\', '/')
+# print(logfile_name)
+# exit()
 # logfile_name = os.path.join(sys.path[0], f"python.log")
 logging.config.fileConfig(fname='log.cnf', defaults={'logfilename': logfile_name}, disable_existing_loggers=False)
 # logger1 = logging.getLogger(__name__)
@@ -69,7 +72,7 @@ arguments = sys.argv[1:]
 
 @log.start_program(logger)
 def welcome():
-    with open('welcome.txt', 'r') as f:
+    with open('welcome.txt', 'r', encoding='UTF-8') as f:
         welcome_str = f.read()
 
     return welcome_str
@@ -85,15 +88,20 @@ def dub_months(find_value, replace_value):
     :param replace_value: список строковых значений, array
     """
 
-    base_string = input('Введите редактируемую строку:\n')
-    if base_string == '':
-        base_string = f"['{find_str[0]}'] = DB('Расходны на персонал', !Тип данных, !Год, !Версия, !Подразделение, '{find_str[0]}')"
+    print('Введите редактируемую строку:\n')
+    base_string = list(iter(input, ''))
+    if len(base_string) == 0:
+        base_string = [f"['{find_str[0]}'] = DB('Расходны на персонал', !Тип данных, !Год, !Версия, !Подразделение, '{find_str[0]}')"]
     new_strings = []
+
     for value in replace_value:
-        new_str = base_string
         for i, rep in enumerate(value.split()):
-            new_str = new_str.replace(find_value[i].strip(), rep.strip())
-        new_strings.append(new_str)
+            formated_text = []
+            for str_ in base_string:
+                # new_str = str
+                new_str = str_.replace(find_value[i].strip(), rep.strip())
+                formated_text.append(new_str)
+            new_strings.append(formated_text)
     return new_strings
 
 
@@ -134,7 +142,8 @@ if __name__ == '__main__':
 
 
         new_strings = dub_months(find_str, rep_str)
-        print(*new_strings, sep='\n')
+        for str_ in new_strings:
+            print(*str_, sep='\n')
 
         # условие выхода из цикла
         if quit_flag == 1:
